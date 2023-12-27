@@ -11,27 +11,10 @@ import { Poseidon } from "@personaelabs/spartan-ecdsa";
 const ec = new EC("secp256k1");
 
 describe("ECDSA Nullifier", () => {
-    test("should calculate witness for ecdsa nullifier", async () => {
-        // Construct the tree
-        const poseidon = new Poseidon();
-        await poseidon.initWasm();
-
-        const circuit = await circomWasmTester(
-            path.join(__dirname, "../src/ecdsa_nullifier.circom"),
-            {
-                prime: "secq256k1"
-            }
-        )
-
+    test("should calculate the T and U", async () => {
         const privKey = secp256k1.utils.randomPrivateKey();
         const privKeyBuffer = Buffer.from(privKey);
         const pubKey = secp256k1.getPublicKey(privKey);
-
-        const privKey_2 = Buffer.from(
-            "f5b552f608f5b552f608f5b552f6082ff5b552f608f5b552f608f5b552f6082f",
-            "hex"
-        );
-        const pubKey_2 = ec.keyFromPrivate(privKey_2.toString("hex")).getPublic();
 
         const nullifierMessageHash = secp256k1.CURVE.hash("This is a Nullifier message");
 
@@ -83,33 +66,37 @@ describe("ECDSA Nullifier", () => {
             splitToRegisters(U.toAffine().y)
         ];
         const TPreComputes = calculatePrecomputes(T!);
+    });
+
+    test("should calculate witness for ecdsa nullifier using personaelabs poseidon", async () => {
+        const poseidon = new Poseidon();
+        await poseidon.initWasm();
+
+        const ecdsaNullifierCircuit = await circomWasmTester(
+            path.join(__dirname, "../src/ecdsa_nullifier.circom"),
+            {
+                prime: "secq256k1"
+            }
+        );
+
+        const privKey = Buffer.from(
+            "f5b552f608f5b552f608f5b552f6082ff5b552f608f5b552f608f5b552f6082f",
+            "hex"
+        );
+        const pubKey = ec.keyFromPrivate(privKey.toString("hex")).getPublic();
+
         const secret = 1n;
 
-        // const Qa = [
-        //     ...splitToRegisters(),
-        //     ...splitToRegisters(pubkeyPoint.toAffine().y)
-        // ];
-
-        const nullifier = await hasher([pubkeyPoint.toAffine().x, pubkeyPoint.toAffine().y, secret]);
-
         const nullifierMessage = Buffer.from("Hello World");
-        const circuitInput = getEffEcdsaCircuitInput(privKey_2, nullifierMessage);
+        const circuitInput = getEffEcdsaCircuitInput(privKey, nullifierMessage);
 
         const Qa = [
-            ...splitToRegisters(pubKey_2.x),
-            ...splitToRegisters(pubKey_2.y),
-        ]
+            ...splitToRegisters(pubKey.x),
+            ...splitToRegisters(pubKey.y),
+        ];
 
-        console.log("1");
-        const nullifier_2 = await poseidon.hash([
-            pubKey_2.x,
-            pubKey_2.y
-        ]);
-        const nullifier_3 = await poseidon.hash([
-            nullifier_2,
-            secret
-        ]);
-        console.log("2");
+        const pubkeyHashed = await poseidon.hash([pubKey.x, pubKey.y]);
+        const nullifier = await poseidon.hash([pubkeyHashed, secret]);
 
         const inputs = {
             s: circuitInput.s,
@@ -120,14 +107,14 @@ describe("ECDSA Nullifier", () => {
             secret
         };
 
-        const witness: bigint[] = await circuit.calculateWitness(inputs, true);
+        const witness: bigint[] = await ecdsaNullifierCircuit.calculateWitness(inputs, true);
 
         //console.log(Object.entries(JSON.parse(witness.toString())));
 
-        await circuit.assertOut(witness, {
-            pubKeyX: pubKey_2.x.toString(),
-            pubKeyY: pubKey_2.y.toString(),
-            nullifier: nullifier_3,
+        await ecdsaNullifierCircuit.assertOut(witness, {
+            pubKeyX: pubKey.x.toString(),
+            pubKeyY: pubKey.y.toString(),
+            nullifier,
         });
     });
 });
