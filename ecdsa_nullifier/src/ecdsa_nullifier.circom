@@ -1,7 +1,7 @@
 pragma circom 2.1.2;
 
 include "../../efficient-ecdsa/src/ecdsa_to_pubkey.circom";
-include "../node_modules/circomlib/circuits/poseidon.circom";
+include "./poseidon_personaelabs/poseidon.circom";
 
 
 template ECDSANullifier() {
@@ -27,12 +27,17 @@ template ECDSANullifier() {
     ecdsaToPubKey.Uy <== Uy;
 
     // Public key hashed with secret.
-    component poseidon = Poseidon(nullifierInputs);
+    component poseidon = Poseidon();
     poseidon.inputs[0] <== ecdsaToPubKey.pubKeyX;
     poseidon.inputs[1] <== ecdsaToPubKey.pubKeyY;
-    poseidon.inputs[2] <== secret;
 
-    nullifier <== poseidon.out;
+    component poseidon2  = Poseidon();
+    poseidon2.inputs[0] <== poseidon.out;
+    poseidon2.inputs[1] <== secret;
+
+    //poseidon.inputs <== hashedInputs;
+
+    nullifier <== poseidon2.out;
     pubKeyX <== ecdsaToPubKey.pubKeyX;
     pubKeyY <== ecdsaToPubKey.pubKeyY;
 }

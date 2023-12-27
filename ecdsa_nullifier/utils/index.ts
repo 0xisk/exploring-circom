@@ -72,7 +72,13 @@ export const hasher = async (inputs: bigint[]): Promise<bigint> => {
     if (!poseidon) {
         poseidon = await buildPoseidon()
     }
-    return BigInt(poseidon.F.toString(poseidon(inputs)) as unknown as string)
+    const hashed = poseidon.F.toString(poseidon(inputs))  as unknown as string;
+    console.log("Hashed", hashed);
+
+    const hasnedBigInt = BigInt(hashed);
+    console.log("hasnedBigInt", hasnedBigInt);
+
+    return hasnedBigInt
 }
 
 

@@ -3,14 +3,19 @@ var EC = require("elliptic").ec;
 const circomWasmTester = require("circom_tester").wasm;
 import * as path from "path";
 import { secp256k1 } from "@noble/curves/secp256k1";
-import * as mod from '@noble/curves/abstract/modular'
-import * as utils from '@noble/curves/abstract/utils'
+import * as mod from '@noble/curves/abstract/modular';
+import * as utils from '@noble/curves/abstract/utils';
 import { calculatePrecomputes, getEffEcdsaCircuitInput, hasher, splitToRegisters } from "../utils";
+import { Poseidon } from "@personaelabs/spartan-ecdsa";
 
 const ec = new EC("secp256k1");
 
 describe("ECDSA Nullifier", () => {
     test("should calculate witness for ecdsa nullifier", async () => {
+        // Construct the tree
+        const poseidon = new Poseidon();
+        await poseidon.initWasm();
+
         const circuit = await circomWasmTester(
             path.join(__dirname, "../src/ecdsa_nullifier.circom"),
             {
@@ -89,8 +94,23 @@ describe("ECDSA Nullifier", () => {
 
         const nullifierMessage = Buffer.from("Hello World");
         const circuitInput = getEffEcdsaCircuitInput(privKey_2, nullifierMessage);
-        const nullifier_2 = await hasher([pubKey_2.x.toString(), pubKey_2.y.toString(), secret]);
-        
+
+        const Qa = [
+            ...splitToRegisters(pubKey_2.x),
+            ...splitToRegisters(pubKey_2.y),
+        ]
+
+        console.log("1");
+        const nullifier_2 = await poseidon.hash([
+            pubKey_2.x,
+            pubKey_2.y
+        ]);
+        const nullifier_3 = await poseidon.hash([
+            nullifier_2,
+            secret
+        ]);
+        console.log("2");
+
         const inputs = {
             s: circuitInput.s,
             Tx: circuitInput.Tx,
@@ -102,12 +122,12 @@ describe("ECDSA Nullifier", () => {
 
         const witness: bigint[] = await circuit.calculateWitness(inputs, true);
 
-        console.log(Object.entries(JSON.parse(witness.toString())));
+        //console.log(Object.entries(JSON.parse(witness.toString())));
 
         await circuit.assertOut(witness, {
             pubKeyX: pubKey_2.x.toString(),
             pubKeyY: pubKey_2.y.toString(),
-            nullifier: nullifier_2,
+            nullifier: nullifier_3,
         });
     });
 });
