@@ -7,17 +7,19 @@ include "./poseidon_personaelabs/poseidon.circom";
 template ECDSANullifier() {
     var nullifierInputs = 3;
 
+    // Private signals
     signal input s;
+    signal input secret;
+
+    // Public signals
     signal input Tx;
     signal input Ty;
     signal input Ux;
     signal input Uy;
 
-    signal input secret;
-
-    signal output nullifier;
     signal output pubKeyX;
     signal output pubKeyY;
+    signal output nullifier;
 
     component ecdsaToPubKey = ECDSAToPubKey();
     ecdsaToPubKey.s <== s;

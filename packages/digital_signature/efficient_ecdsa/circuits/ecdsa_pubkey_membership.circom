@@ -2,26 +2,26 @@ pragma circom 2.1.2;
 
 include "./ecdsa_to_pubkey.circom";
 include "./to_address/zk-identity/eth.circom";
-include "../../merkle-tree/src/tree.circom";
+include "../../../data_structure/merkle_tree/circuits/tree.circom";
 
 /**
-    $> circom ./src/ecdsa_pubkey_membership.circom --r1cs --wasm --sym --c --output ./build 
+    > circom ./src/ecdsa_pubkey_membership.circom --r1cs --wasm --sym --c --output ./build 
         
-        template instances: 150
-        non-linear constraints: 3971
-        linear constraints: 0
-        public inputs: 0
-        public outputs: 1
-        private inputs: 12
-        private outputs: 0
-        wires: 3976
-        labels: 12205
-        Written successfully: ./build/ecdsa_pubkey_membership.r1cs
-        Written successfully: ./build/ecdsa_pubkey_membership.sym
-        Written successfully: ./build/ecdsa_pubkey_membership_cpp/ecdsa_pubkey_membership.cpp and ./build/ecdsa_pubkey_membership_cpp/ecdsa_pubkey_membership.dat
-        Written successfully: ./build/ecdsa_pubkey_membership_cpp/main.cpp, circom.hpp, calcwit.hpp, calcwit.cpp, fr.hpp, fr.cpp, fr.asm and Makefile
-        Written successfully: ./build/ecdsa_pubkey_membership_js/ecdsa_pubkey_membership.wasm
-        Everything went okay, circom safe
+    template instances: 150
+    non-linear constraints: 3971
+    linear constraints: 0
+    public inputs: 0
+    public outputs: 1
+    private inputs: 12
+    private outputs: 0
+    wires: 3976
+    labels: 12205
+    Written successfully: ./build/ecdsa_pubkey_membership.r1cs
+    Written successfully: ./build/ecdsa_pubkey_membership.sym
+    Written successfully: ./build/ecdsa_pubkey_membership_cpp/ecdsa_pubkey_membership.cpp and ./build/ecdsa_pubkey_membership_cpp/ecdsa_pubkey_membership.dat
+    Written successfully: ./build/ecdsa_pubkey_membership_cpp/main.cpp, circom.hpp, calcwit.hpp, calcwit.cpp, fr.hpp, fr.cpp, fr.asm and Makefile
+    Written successfully: ./build/ecdsa_pubkey_membership_js/ecdsa_pubkey_membership.wasm
+    Everything went okay, circom safe
 */
 template ECDSAPubKeyMembership(nLevels) {
     var bits = 256;

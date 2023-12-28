@@ -4,8 +4,28 @@ include "./utils.circom";
 include "../node_modules/circomlib/circuits/poseidon.circom";
 
 
+/*
+    > circom circuits/rln.circom --r1cs --wasm --sym --c --output ./build 
+    
+    template instances: 214
+    non-linear constraints: 960
+    linear constraints: 0
+    public inputs: 2
+    public outputs: 2
+    private inputs: 3
+    private outputs: 0
+    wires: 964
+    labels: 2929
+    Written successfully: ./build/rln.r1cs
+    Written successfully: ./build/rln.sym
+    Written successfully: ./build/rln_cpp/rln.cpp and ./build/rln_cpp/rln.dat
+    Written successfully: ./build/rln_cpp/main.cpp, circom.hpp, calcwit.hpp, calcwit.cpp, fr.hpp, fr.cpp, fr.asm and Makefile
+    Written successfully: ./build/rln_js/rln.wasm
+    Everything went okay, circom safe
+*/
+
 // A pure RLN without memebership checker
-template RLN(DEPTH, LIMIT_BIT_SIZE) {
+template RLN(LIMIT_BIT_SIZE) {
     // Private signals
     signal input identitySecret;
     signal input userMessageLimit;
@@ -32,5 +52,3 @@ template RLN(DEPTH, LIMIT_BIT_SIZE) {
     // Nullifier Calculation
     nullifier <== Poseidon(1)([a1]);
 }
-
-component main { public [x, externalNullifier] } = RLN(20, 16);
