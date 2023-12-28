@@ -9,6 +9,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "circom_tester": "^0.0.20",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "nx": "^17.2.7",
