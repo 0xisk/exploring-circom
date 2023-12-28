@@ -1,2 +1,2 @@
-# exploring-zk-circom
+# Exploring Circom
 Exploring and practicing zkSNARKs Circum language.

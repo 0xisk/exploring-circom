@@ -1,0 +1,7 @@
+packages:
+  - "packages/*"
+  - "packages/data_structure/*"
+  - "packages/digital_signature/*"
+  - "packages/hash_functions/*"
+  - "packages/protocols/*"
+  

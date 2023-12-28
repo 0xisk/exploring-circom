@@ -1,5 +1,5 @@
 {
-  "name": "ecdsa_nullifier",
+  "name": "@exploringcircom/ecdsa-nullifier",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
