@@ -6,7 +6,6 @@ module.exports = {
     },
     testMatch: ["<rootDir>/test/**/*.[jt]s?(x)",], displayName: "@cryptkeeperzk/zk",
     moduleNameMapper: {
-      nanoid: "<rootDir>/src/config/mock/nanoidMock.js",
       "@src/(.*)$": "<rootDir>/src/$1",
     },
     moduleFileExtensions: ["ts", "js"],

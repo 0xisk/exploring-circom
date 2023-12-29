@@ -4,7 +4,7 @@ import * as path from "path";
 describe("poseidon", () => {
   it("should output correct hash", async () => {
     const circuit = await circomWasmTester(
-      path.join(__dirname, "./circuits/poseidon_circomlib.circom"),
+      path.join(__dirname, "../circuits/poseidon_circomlib.circom"),
       {
         prime: "secq256k1"
       }

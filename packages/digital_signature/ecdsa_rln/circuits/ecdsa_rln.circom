@@ -25,7 +25,7 @@ template ECDSARLN(DEPTH, LIMIT_BIT_SIZE) {
     signal output nullifier;
 
     // Check the signature public key membership and extract the address
-    signal address <==  ECDSAAddrMembership(DEPTH)(S, Tx, Ty, Ux, Uy, root, pathIndices, siblings);
+    signal address <== ECDSAAddrMembership(DEPTH)(S, Tx, Ty, Ux, Uy, root, pathIndices, siblings);
 
     // Using RLN to calculate the nullifier for that address according to the message limit and message id.
     component rln = RLN(LIMIT_BIT_SIZE);
