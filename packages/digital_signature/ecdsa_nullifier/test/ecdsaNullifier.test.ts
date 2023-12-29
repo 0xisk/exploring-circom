@@ -1,6 +1,10 @@
 var EC = require("elliptic").ec;
 
 const circomWasmTester = require("circom_tester").wasm;
+const buildPoseidon = require("circomlibjs").buildPoseidon;
+
+import { poseidon3 } from "poseidon-lite";
+
 import * as path from "path";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import * as mod from '@noble/curves/abstract/modular';
@@ -72,11 +76,11 @@ describe("ECDSA Nullifier", () => {
         const poseidon = new Poseidon();
         await poseidon.initWasm();
 
+        const poseidonCircomlib = await buildPoseidon();
+        const F = poseidonCircomlib.F;
+
         const ecdsaNullifierCircuit = await circomWasmTester(
-            path.join(__dirname, "../src/ecdsa_nullifier.circom"),
-            {
-                prime: "secq256k1"
-            }
+            path.join(__dirname, "./circuits/ecdsa_nullifier.circom")
         );
 
         const privKey = Buffer.from(
@@ -95,26 +99,34 @@ describe("ECDSA Nullifier", () => {
             ...splitToRegisters(pubKey.y),
         ];
 
-        const pubkeyHashed = await poseidon.hash([pubKey.x, pubKey.y]);
-        const nullifier = await poseidon.hash([pubkeyHashed, secret]);
+        // const pubkeyHashed = await poseidon.hash([pubKey.x, pubKey.y]);
+        // const nullifier = await poseidon.hash([pubkeyHashed, secret]);
+
+        const nullifier_hasher = await hasher([pubKey.x, pubKey.y, secret]);
+        console.log("nullifier_hasher", nullifier_hasher);
+
+        const nullifier = await poseidonCircomlib([pubKey.x, pubKey.y, secret]);
+        const nullifierF = F.toObject(nullifier);
+        console.log("nullifierF", nullifierF);
+
+        const nullifier_poseidon_lite = poseidon3([pubKey.x, pubKey.y, secret]);
+        console.log("nullifier_poseidon_lite", nullifier_poseidon_lite);
 
         const inputs = {
             s: circuitInput.s,
+            secret,
             Tx: circuitInput.Tx,
             Ty: circuitInput.Ty,
             Ux: circuitInput.Ux,
             Uy: circuitInput.Uy,
-            secret
         };
 
         const witness: bigint[] = await ecdsaNullifierCircuit.calculateWitness(inputs, true);
 
-        //console.log(Object.entries(JSON.parse(witness.toString())));
-
         await ecdsaNullifierCircuit.assertOut(witness, {
-            pubKeyX: pubKey.x.toString(),
-            pubKeyY: pubKey.y.toString(),
-            nullifier,
+            pubKeyX: pubKey.x,
+            pubKeyY: pubKey.y,
+            nullifier: nullifierF,
         });
     });
 });

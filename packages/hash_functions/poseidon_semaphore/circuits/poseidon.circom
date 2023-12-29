@@ -92,7 +92,7 @@ template PartialRound(pos) {
     }
 }
 
-template Poseidon() {
+template PoseidonSemaphore() {
     var numInputs = 2;
     var t = numInputs + 1;
     signal input inputs[numInputs];

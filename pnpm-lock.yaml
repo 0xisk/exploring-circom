@@ -102,6 +102,9 @@ importers:
       ethers:
         specifier: ^6.9.1
         version: 6.9.1
+      poseidon-lite:
+        specifier: ^0.2.0
+        version: 0.2.0
       snarkjs:
         specifier: ^0.7.2
         version: 0.7.2
@@ -354,6 +357,30 @@ importers:
         version: 5.3.3
 
   packages/protocols/rln:
+    dependencies:
+      circom_tester:
+        specifier: ^0.0.20
+        version: 0.0.20
+      circomlib:
+        specifier: ^2.0.5
+        version: 2.0.5
+      circomlibjs:
+        specifier: ^0.1.7
+        version: 0.1.7
+
+  packages/protocols/rln_poseidon_circomlib:
+    dependencies:
+      circom_tester:
+        specifier: ^0.0.20
+        version: 0.0.20
+      circomlib:
+        specifier: ^2.0.5
+        version: 2.0.5
+      circomlibjs:
+        specifier: ^0.1.7
+        version: 0.1.7
+
+  packages/protocols/rln_poseidon_secp256k1:
     dependencies:
       circom_tester:
         specifier: ^0.0.20
@@ -3685,6 +3712,10 @@ packages:
     dependencies:
       find-up: 4.1.0
     dev: true
+
+  /poseidon-lite@0.2.0:
+    resolution: {integrity: sha512-vivDZnGmz8W4G/GzVA72PXkfYStjilu83rjjUfpL4PueKcC8nfX6hCPh2XhoC5FBgC6y0TA3YuUeUo5YCcNoig==}
+    dev: false
 
   /prelude-ls@1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}

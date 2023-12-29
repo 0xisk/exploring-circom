@@ -1,6 +1,6 @@
 pragma circom 2.1.2;
 
-include "./poseidon/poseidon.circom";
+include "../../../hash_functions/poseidon_semaphore/circuits/poseidon.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 
 /**
@@ -85,7 +85,7 @@ template MerkleTreeInclusionProof(nLevels) {
         */
         pathIndices[i] * (1 - pathIndices[i]) === 0; 
 
-        poseidon[i] = Poseidon();
+        poseidon[i] = PoseidonSemaphore();
         mux[i] = MultiMux1(2);
 
         mux[i].c[0][0] <== hashes[i];

@@ -1,4 +1,4 @@
 module.exports = {
   preset: "../../../jest-preset.js",
-  displayName: "@exploring-circom/ecdsa-nullifier",
+  displayName: "@exploring-circom/poseidon-semaphore",
 };

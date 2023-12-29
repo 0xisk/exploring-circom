@@ -2,7 +2,7 @@ pragma circom 2.1.2;
 
 include "./ecdsa_to_pubkey.circom";
 include "./to_address/zk-identity/eth.circom";
-include "../../merkle-tree/src/tree.circom";
+include "../../../data_structure/merkle_tree/circuits/tree.circom";
 
 /**
     $> circom ./src/ecdsa_addr_membership.circom --r1cs --wasm --sym --c --output ./build 
@@ -66,5 +66,3 @@ template ECDSAAddrMembership(nLevels) {
 
     root === merkleProof.root;
 }
-
-component main { public[ root, Tx, Ty, Ux, Uy ]} = ECDSAAddrMembership(20);

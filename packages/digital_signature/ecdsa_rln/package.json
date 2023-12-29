@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "circom circuits/ecdsa_rln.circom --r1cs --wasm --sym --c --output ./build ",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
